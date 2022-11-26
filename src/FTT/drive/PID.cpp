@@ -24,7 +24,8 @@ void Drive::reset_PID_values(){
     turnD = 0;
 }
 
-void Drive::drive_pid(double target, double percent_speed){ // TODO: add heading correction
+// TODO: Make drive and turn PID into tasks
+void Drive::drive_pid(double target, double percent_speed){
     reset_drive_sensors();
     int dir = (target < 0) ? -1: 1; // driving direction (+1 for forwards; -1 for backwards)
     double volt = percent_speed*1.27; // percent to voltage
@@ -46,17 +47,25 @@ void Drive::drive_pid(double target, double percent_speed){ // TODO: add heading
 
     double tolError = (target/100) * TPI; // error tolerance
 
+    double headingInit = imu.get_heading();
+    double headingError = 0;
+    int H = 0;
+
     while ( !(((right_encs() + left_encs()) / 2) > tar - tolError && ((right_encs() + left_encs()) / 2) < tar + tolError)){
         prevError = error;
         error = tar - ((right_encs() + left_encs()) / 2);
-        P = error * driveP;
-        i += error;
-        I = i * driveI;
-        d = error - prevError;
-        D = d * driveD;
+        headingError = headingInit - imu.get_heading(); // + --> right more power | - --> left more power
 
-        lPower = volt + P + I + D;
-        rPower = volt + P + I + D;
+        i += error;
+        d = error - prevError;
+
+        P = error * driveP;
+        I = i * driveI;
+        D = d * driveD;
+        H = headingError*2.5;
+
+        lPower = volt + P + I + D - H;
+        rPower = volt + P + I + D + H;
         
         set_tank(lPower, rPower);
     }
@@ -64,11 +73,35 @@ void Drive::drive_pid(double target, double percent_speed){ // TODO: add heading
 
 void Drive::turn_pid(double target, double percent_speed, int direction){
     reset_drive_sensors();
-    int dir = direction; // easier to type
     double volt = percent_speed*1.27; // percent to voltage
 
-    // while
-    right_motors.front().get_position();
+    double error = 0;
+    double prevError = 0;
+    double P = 0;
+    double i = 0;
+    double I = 0;
+    double d = 0;
+    double D = 0;
 
-    set_tank(volt*dir, volt*-dir);
+    double lPower = 0;
+    double rPower = 0;
+
+    double tolError = 0.05; // error tolerance
+
+    while (!(imu.get_heading() > target - tolError && imu.get_heading() < target + tolError)){
+        prevError = error;
+        error = target - imu.get_heading();
+
+        i += error;
+        d = error - prevError;
+
+        P = error * turnP;
+        I = i * turnI;
+        D = d * turnD;
+
+        lPower = (volt + P + I + D)*direction;
+        rPower = (volt + P + I + D)*-direction;
+        
+        set_tank(lPower, rPower);
+    }
 }
