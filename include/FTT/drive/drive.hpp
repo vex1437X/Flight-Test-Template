@@ -29,6 +29,13 @@ class Drive {
     std::vector<pros::Motor> right_motors;
 
     /**
+     * Amount of Left/Right drive motors
+     * 
+     */
+    int NUM_LEFT_MOTOR;
+    int NUM_RIGHT_MOTOR;
+
+    /**
      * Inertial sensor.
      */
     pros::Imu imu;
@@ -69,6 +76,11 @@ class Drive {
     void set_controller_threshold(int threshold);
 
     /**
+     * Controller threshold
+     */
+    double THRESH;
+
+    /**
      * Changes the brake type of the drive motors
      *
      * \param brake_type
@@ -83,12 +95,23 @@ class Drive {
     pros::motor_brake_mode_e_t CURRENT_BRAKE = pros::E_MOTOR_BRAKE_COAST;
 
     /**
-     * Resets the current gyro value.  Defaults to 0.
-     *
-     * \param new_heading
-     *        New heading value.
+     * Resets & tares drive motors
      */
-    void reset_gyro(double new_heading = 0);
+    void reset_drive_sensors();
+
+    /**
+     * Resets the current gyro value.  Sets to 0.
+     */
+    void reset_gyro();
+
+    /**
+     * Sets the heading value of the inertial sensor
+     * Useful for long auton runs where you 'reset' your bot along a wall
+     * 
+     * \param heading
+     *      Heading of gyro in degrees
+     */
+    void set_heading(int heading); 
 
     /**
      * Calibrates the inertial sensor.
@@ -110,4 +133,14 @@ class Drive {
     double CARTRIDGE;
     double RATIO;
     double WHEEL_DIAMETER;
+
+    /**
+     * Returns the absolute average position of the left chassis motors
+     */
+    double left_encs();
+
+    /**
+     * Returns the absolute average position of the right chassis motors
+     */
+    double right_encs();
 };
