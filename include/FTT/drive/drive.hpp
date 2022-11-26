@@ -63,9 +63,9 @@ class Drive {
     /**
      * Sets the chassis to voltage
      *
-     * \param left
+     * @param left
      *        voltage for left side, -127 to 127
-     * \param right
+     * @param right
      *        voltage for right side, -127 to 127
      */
     void set_tank(int left, int right);
@@ -83,7 +83,7 @@ class Drive {
     /**
      * Changes the brake type of the drive motors
      *
-     * \param brake_type
+     * @param brake_type
      *        the 'brake mode' of the motor e.g. 'pros::E_MOTOR_BRAKE_COAST' 'pros::E_MOTOR_BRAKE_BRAKE' 'pros::E_MOTOR_BRAKE_HOLD'
      */
     void set_drive_brake(pros::motor_brake_mode_e_t brake_type);
@@ -105,10 +105,10 @@ class Drive {
     void reset_gyro();
 
     /**
-     * Sets the heading value of the inertial sensor
+     * Sets the heading value of the inertial sensor.
      * Useful for long auton runs where you 'reset' your bot along a wall
      * 
-     * \param heading
+     * @param heading
      *      Heading of gyro in degrees
      */
     void set_heading(int heading); 
@@ -143,4 +143,41 @@ class Drive {
      * Returns the absolute average position of the right chassis motors
      */
     double right_encs();
+
+    /**
+     * PID VALUES
+     * 
+     */
+    double driveP;
+    double driveI;
+    double driveD;
+    double turnP;
+    double turnI;
+    double turnD;
+
+    /**
+     * Set PID values for driving
+     * forwards and backwards
+     * 
+     * @param p 
+     * P value
+     * @param i 
+     * I value
+     * @param d 
+     * D value
+     */
+    void set_drive_pid(double p, double i, double d);
+
+    /**
+     * Set PID values for turning
+     * left and right
+     * 
+     * @param p 
+     * P value
+     * @param i 
+     * I value
+     * @param d 
+     * D value
+     */
+    void set_turn_pid(double p, double i, double d);
 };

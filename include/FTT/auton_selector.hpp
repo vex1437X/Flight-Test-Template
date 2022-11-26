@@ -4,7 +4,6 @@
 #include <tuple>
 
 #include "FTT/auton.hpp"
-#include "main.h"
 
 using namespace std;
 class AutonSelector {
