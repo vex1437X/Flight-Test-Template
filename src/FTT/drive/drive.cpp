@@ -125,3 +125,7 @@ double Drive::right_encs() {
     }
     return right/NUM_RIGHT_MOTOR;
 }
+
+double Drive::encs() {
+    return (right_encs() + left_encs()) / 2
+}

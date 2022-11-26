@@ -52,9 +52,9 @@ void Drive::drive_pid(double target, double percent_speed){
 
 
 
-    while ( !(((right_encs() + left_encs()) / 2) > tar - tolError && ((right_encs() + left_encs()) / 2) < tar + tolError)){
+    while ( !(encs() > tar - tolError && encs() < tar + tolError)){
         prevError = error;
-        error = tar - ((right_encs() + left_encs()) / 2);
+        error = tar - encs();
         headingError = headingInit - imu.get_heading(); // + --> right more power | - --> left more power
         if (headingError < -180){headingError += 360;}
         else if(headingError > 180){headingError -= 360;}
@@ -75,9 +75,9 @@ void Drive::drive_pid(double target, double percent_speed){
     }
 
     // Overshoot correction
-    while ((((right_encs() + left_encs()) / 2) > tar + tolError)){
+    while ((encs() > tar + tolError)){
         prevError = error;
-        error = tar - ((right_encs() + left_encs()) / 2);
+        error = tar - encs();
 
         i += error;
         d = error - prevError;
@@ -93,9 +93,9 @@ void Drive::drive_pid(double target, double percent_speed){
         set_tank(lPower, rPower);
     }
     // Undershoot correction
-     while ((((right_encs() + left_encs()) / 2) < tar - tolError)){
+     while ((encs() < tar - tolError)){
         prevError = error;
-        error = tar - ((right_encs() + left_encs()) / 2);
+        error = tar - encs();
 
         i += error;
         d = error - prevError;
@@ -185,10 +185,10 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
 void Drive::settle_drive(){
     reset_drive_sensors();
     double prev = -10;
-    double curr = (right_encs() + left_encs()) / 2;
+    double curr = encs();
     while(prev != curr){
         prev = curr;
-        curr = (right_encs() + left_encs()) / 2;
+        curr = encs();
         pros::delay(20);
     }
 }

@@ -145,6 +145,11 @@ class Drive {
     double right_encs();
 
     /**
+     * Returns the absolute average position of the chassis motors
+     */
+    double encs();
+
+    /**
      * PID VALUES
      * 
      */
