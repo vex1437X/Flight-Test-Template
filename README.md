@@ -1,3 +1,6 @@
-# Dumbo Base
-First iteration of Odometry for the VEX 2022-2023 game.
-Base code for Dumbo bot
+# Flight Test Template
+Easy to use template for VEX Pros
+## Includes basic functions
+- Drive PID
+- Turn PID
+- Driver Control
