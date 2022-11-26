@@ -68,8 +68,46 @@ void Drive::drive_pid(double target, double percent_speed){
         D = d * driveD;
         H = headingError*2.5;
 
-        lPower = volt + P + I + D - H;
-        rPower = volt + P + I + D + H;
+        dir = (error < 0) ? -1 : 1;
+        lPower = dir*(volt + P + I + D - H);
+        rPower = dir*(volt + P + I + D + H);
+        
+        set_tank(lPower, rPower);
+    }
+
+    // Overshoot correction
+    while ((((right_encs() + left_encs()) / 2) > tar + tolError)){
+        prevError = error;
+        error = tar - ((right_encs() + left_encs()) / 2);
+
+        i += error;
+        d = error - prevError;
+
+        P = error * driveP;
+        I = i * driveI;
+        D = d * driveD;
+
+        dir = (error < 0) ? -1 : 1; // should be -1
+        lPower = dir*(volt + P + I + D);
+        rPower = dir*(volt + P + I + D);
+        
+        set_tank(lPower, rPower);
+    }
+    // Undershoot correction
+     while ((((right_encs() + left_encs()) / 2) < tar - tolError)){
+        prevError = error;
+        error = tar - ((right_encs() + left_encs()) / 2);
+
+        i += error;
+        d = error - prevError;
+
+        P = error * driveP;
+        I = i * driveI;
+        D = d * driveD;
+
+        dir = (error < 0) ? -1 : 1; // should be 1
+        lPower = dir*(volt + P + I + D);
+        rPower = dir*(volt + P + I + D);
         
         set_tank(lPower, rPower);
     }
@@ -93,6 +131,41 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
     double tolError = 0.05; // error tolerance
 
     while (!(imu.get_heading() > target - tolError && imu.get_heading() < target + tolError)){
+        prevError = error;
+        error = target - imu.get_heading();
+
+        i += error;
+        d = error - prevError;
+
+        P = error * turnP;
+        I = i * turnI;
+        D = d * turnD;
+
+        lPower = (volt + P + I + D)*direction;
+        rPower = (volt + P + I + D)*-direction;
+        
+        set_tank(lPower, rPower);
+    }
+    // Overshoot correction
+    while (imu.get_heading() > target + tolError){
+        prevError = error;
+        error = target - imu.get_heading();
+
+        i += error;
+        d = error - prevError;
+
+        P = error * turnP;
+        I = i * turnI;
+        D = d * turnD;
+
+        lPower = (volt + P + I + D)*-direction;
+        rPower = (volt + P + I + D)*direction;
+        
+        set_tank(lPower, rPower);
+    }
+
+    // Undershoot correcton
+    while (imu.get_heading() < target - tolError){
         prevError = error;
         error = target - imu.get_heading();
 
