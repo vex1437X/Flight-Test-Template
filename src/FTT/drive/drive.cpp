@@ -127,5 +127,9 @@ double Drive::right_encs() {
 }
 
 double Drive::encs() {
-    return (right_encs() + left_encs()) / 2
+    return (right_encs() + left_encs()) / 2;
+}
+
+double Drive::off() {
+    set_tank(0, 0);
 }

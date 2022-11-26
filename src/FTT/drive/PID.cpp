@@ -110,6 +110,7 @@ void Drive::drive_pid(double target, double percent_speed){
         
         set_tank(lPower, rPower);
     }
+    off();
 }
 
 void Drive::turn_pid(double target, double percent_speed, int direction){
@@ -162,7 +163,6 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
         
         set_tank(lPower, rPower);
     }
-
     // Undershoot correcton
     while (imu.get_heading() < target - tolError){
         prevError = error;
@@ -180,9 +180,11 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
         
         set_tank(lPower, rPower);
     }
+    off();
 }
 
 void Drive::settle_drive(){
+    off();
     reset_drive_sensors();
     double prev = -10;
     double curr = encs();

@@ -220,4 +220,10 @@ class Drive {
      * Stalls auton code until the chassis has stopped
      */
     void settle_drive();
+
+    /**
+     * @brief 
+     * Sets all chassis motors to 0
+     */
+    double off();
 };
