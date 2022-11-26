@@ -180,4 +180,33 @@ class Drive {
      * D value
      */
     void set_turn_pid(double p, double i, double d);
+
+    /**
+     * @brief 
+     * Reset PID values for turning and driving.
+     * 
+     */
+    void reset_PID_values();
+
+    /**
+     * @brief 
+     * Drive for target amount
+     * @param target 
+     * Target drive (in inches; -∞ to +∞)
+     * @param percent_speed 
+     * Driving speed (in percent; 0 to 100)
+     */
+    void drive_pid(double target, double percent_speed);
+
+    /**
+     * @brief 
+     * Turns TO target (NOT FOR target degrees).
+     * @param target 
+     * Target turn (in degrees; 0 to 359.999)
+     * @param percent_speed 
+     * Turning speed (in percent; 0 to 100)
+     * @param direction
+     * Turning direction (counter-clockwise or clockwise; -1 or +1)
+     */
+    void turn_pid(double target, double percent_speed, int direction);
 };

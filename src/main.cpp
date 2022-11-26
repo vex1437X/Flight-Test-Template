@@ -37,6 +37,7 @@ void initialize() {
 
 	// initialise chassis and auton selector
 	chassis.initialise();
+	chassis.reset_PID_values();
 	as::initialise();
 }
 

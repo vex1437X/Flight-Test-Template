@@ -43,10 +43,10 @@ double Drive::get_tick_per_inch() {
 
 void Drive::set_tank(int left, int right) {
     for (pros::Motor i : left_motors) {
-        i.move_voltage(left * (12000.0 / 127.0));
+        i.move(left);
     }
     for (pros::Motor i : right_motors) {
-        i.move_voltage(right * (12000.0 / 127.0));
+        i.move(right);
     }
 }
 
