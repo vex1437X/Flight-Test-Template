@@ -24,7 +24,6 @@ void Drive::reset_PID_values(){
     turnD = 0;
 }
 
-// TODO: Make drive and turn PID into tasks
 void Drive::drive_pid(double target, double percent_speed){
     reset_drive_sensors();
     int dir = (target < 0) ? -1: 1; // driving direction (+1 for forwards; -1 for backwards)
