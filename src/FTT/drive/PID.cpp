@@ -51,10 +51,14 @@ void Drive::drive_pid(double target, double percent_speed){
     double headingError = 0;
     int H = 0;
 
+
+
     while ( !(((right_encs() + left_encs()) / 2) > tar - tolError && ((right_encs() + left_encs()) / 2) < tar + tolError)){
         prevError = error;
         error = tar - ((right_encs() + left_encs()) / 2);
         headingError = headingInit - imu.get_heading(); // + --> right more power | - --> left more power
+        if (headingError < -180){headingError += 360;}
+        else if(headingError > 180){headingError -= 360;}
 
         i += error;
         d = error - prevError;
