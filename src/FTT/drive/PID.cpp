@@ -182,3 +182,14 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
         set_tank(lPower, rPower);
     }
 }
+
+void Drive::settle_drive(){
+    reset_drive_sensors();
+    double prev = -10;
+    double curr = (right_encs() + left_encs()) / 2;
+    while(prev != curr){
+        prev = curr;
+        curr = (right_encs() + left_encs()) / 2;
+        pros::delay(20);
+    }
+}

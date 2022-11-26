@@ -209,4 +209,10 @@ class Drive {
      * Turning direction (counter-clockwise or clockwise; -1 or +1)
      */
     void turn_pid(double target, double percent_speed, int direction);
+
+    /**
+     * @brief
+     * Stalls auton code until the chassis has stopped
+     */
+    void settle_drive();
 };
