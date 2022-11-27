@@ -1,3 +1,13 @@
-# Dumbo Base
-First iteration of Odometry for the VEX 2022-2023 game.
-Base code for Dumbo bot
+# Flight Test Template
+Easy to use VEX Pros template
+## Included functions
+- Driver Control (tank / arcade)
+- Drive PID
+- Turn PID
+- Team colour check
+- Spin colour wheel to correct colour (no extra code needed)
+## Subsystems
+- Intake support
+- Colourwheel support
+- Catapult support
+- Flywheel support

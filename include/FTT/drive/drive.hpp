@@ -4,7 +4,6 @@
 #include <iostream>
 #include <tuple>
 
-// #include "FTT/PID.hpp"
 #include "FTT/util.hpp"
 #include "pros/motors.h"
 
@@ -56,9 +55,14 @@ class Drive {
     Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_ports, int imu_port, double wheel_diameter, double cartridge_rpm, double ratio);
 
     /**
-     * Sets the chassis to controller joysticks using tank control.  Run is usercontrol.
+     * Sets the chassis to controller joysticks using tank control. Run in usercontrol.
      */
     void tank();
+
+    /**
+     * Sets the chassis to controller joysticks using arcade control. Run in usercontrol.
+     */
+    void arcade();
 
     /**
      * Sets the chassis to voltage
@@ -225,5 +229,5 @@ class Drive {
      * @brief 
      * Sets all chassis motors to 0
      */
-    double off();
+    void off();
 };

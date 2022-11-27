@@ -9,15 +9,15 @@ Drive::Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_por
     NUM_LEFT_MOTOR = 0;
     NUM_RIGHT_MOTOR = 0;
 
-    // Set ports to a global vector
+    // Set ports to global vectors
     // Creates motors
     // Initialises how many motors there are on each side of the chassis
-    for (int i  = 0; i < left_motor_ports.size(); i++) {
+    for (int i : left_motor_ports) {
         NUM_LEFT_MOTOR++;
         pros::Motor place(i, is_reversed(i));
         left_motors.push_back(place);
     }
-    for (int i  = 0; i < right_motor_ports.size(); i++) {
+    for (int i : right_motor_ports) {
         NUM_RIGHT_MOTOR++;
         pros::Motor place(i, is_reversed(i));
         right_motors.push_back(place);
@@ -101,6 +101,15 @@ void Drive::tank() {
     set_tank(l_stick, r_stick);
 }
 
+void Drive::arcade() {
+    reset_drive_sensors(); // not really necessary
+
+    int l_stick = (abs(master.get_analog(ANALOG_LEFT_Y)) < THRESH) ? 0 : master.get_analog(ANALOG_LEFT_Y);
+    int r_stick = (abs(master.get_analog(ANALOG_RIGHT_X)) < THRESH) ? 0 : master.get_analog(ANALOG_RIGHT_X);
+
+    set_tank(l_stick + r_stick, l_stick - r_stick);
+}
+
 void Drive::reset_drive_sensors() {
     for (pros::Motor i : left_motors) {
         i.tare_position();
@@ -130,6 +139,6 @@ double Drive::encs() {
     return (right_encs() + left_encs()) / 2;
 }
 
-double Drive::off() {
+void Drive::off() {
     set_tank(0, 0);
 }

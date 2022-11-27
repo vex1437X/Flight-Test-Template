@@ -1,4 +1,4 @@
-bin/FTT/auton.cpp.o: src/FTT/auton.cpp include/main.h include/api.h \
+bin/FTT/systems.cpp.o: src/FTT/systems.cpp include/main.h include/api.h \
  include/pros/adi.h include/pros/colors.h include/pros/distance.h \
  include/pros/error.h include/pros/ext_adi.h include/pros/adi.h \
  include/pros/adi.h include/pros/gps.h include/pros/imu.h \
