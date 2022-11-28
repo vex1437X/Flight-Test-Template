@@ -210,45 +210,41 @@ void Systems::spinColour(){
     }
 }
 
-void Systems::Systems_task() {
-    double targetRPM = 0;
-    double mV = 0;
-    double exMV = 0;
-    resetCata(); // reset catapult at the start of match
+double targetRPM = 0;
+double mV = 0;
+double exMV = 0;
 
-    while(true){
-        // Simple P loop for flywheel INTERNAL RPM
-        if (flytoggle){
-            // * voltage/rpm correction *
-            // percent to miliVolts
-            FLY_SPEED = abs(FLY_SPEED);
-            targetRPM = FLY_CART*(FLY_SPEED/100); // FLY_CART is max internal rpm :: total rpm of system is 600*5/1 = 3000 rpm
-            mV = 12000*(FLY_SPEED/100);       // 12000 is max mV          20 mV : 1 rpm
-            exMV = 0;                 // extra mV needed to be added to flywheel
-            if (getActRPM() < targetRPM-5 || getActRPM() > targetRPM+5) {exMV = 10*(targetRPM - getActRPM());}
-            for (pros::Motor i : flywheel_motors) {
-                i.move_voltage(mV + exMV);
-            }
+void Systems::Systems_task() { // BEING RAN IN MAIN
+    // Simple P loop for flywheel INTERNAL RPM
+    if (flytoggle){
+        // * voltage/rpm correction *
+        // percent to miliVolts
+        FLY_SPEED = abs(FLY_SPEED);
+        targetRPM = FLY_CART*(FLY_SPEED/100); // FLY_CART is max internal rpm :: total rpm of system is 600*5/1 = 3000 rpm
+        mV = 12000*(FLY_SPEED/100);       // 12000 is max mV          20 mV : 1 rpm
+        exMV = 0;                 // extra mV needed to be added to flywheel
+        if (getActRPM() < targetRPM-5 || getActRPM() > targetRPM+5) {exMV = 10*(targetRPM - getActRPM());}
+        for (pros::Motor i : flywheel_motors) {
+            i.move_voltage(mV + exMV);
         }
-
-        // Catapult control
-
-        if (master.get_digital(CATA_SHOT)){
-            fireCata();
-            pros::delay(600);
-        }
-        resetCata();
-
-        // Colour wheel control
-
-        if (master.get_digital(COLOUR_SPIN)){
-            if (get_colourW_prox() < 30){
-                spinColour();
-            }
-        }
-
-        pros::delay(10);
     }
+
+    // Catapult control
+
+    if (master.get_digital(CATA_SHOT)){
+        fireCata();
+        pros::delay(600);
+    }
+    resetCata();
+
+    // Colour wheel control
+
+    if (master.get_digital(COLOUR_SPIN)){
+        if (get_colourW_prox() < 30){
+            spinColour();
+        }
+    }
+    pros::delay(10);
 }
 
 void Systems::set_flywheel_speed_percent(double percent) {

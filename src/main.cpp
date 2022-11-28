@@ -85,15 +85,17 @@ void autonomous() {
 	as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
 }
 
-void Systems_task(void*){ // just a feeder function
-	sys.Systems_task();
+void Systems_task(void*){ // just a feeder function // KEEP THIS
+	while (true){
+		sys.Systems_task();
+	}
 }
 
 void opcontrol() {
 	Task SystemsCalc(Systems_task, nullptr); // used for flywheel adjustments // used for catapult resets // used for colour wheel
 
 	chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // change to whatever brake type (HOLD, COAST)
-	chassis.set_controller_threshold(5);	   // controller threshold -- limits controller drift
+	chassis.set_controller_threshold(0);	   // controller threshold -- limits controller drift
 
 	// Set system controls
 	sys.set_intake_buttons(E_CONTROLLER_DIGITAL_A, E_CONTROLLER_DIGITAL_A);
