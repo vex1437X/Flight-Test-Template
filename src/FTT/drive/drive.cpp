@@ -14,12 +14,12 @@ Drive::Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_por
     // Initialises how many motors there are on each side of the chassis
     for (int i : left_motor_ports) {
         NUM_LEFT_MOTOR++;
-        pros::Motor place(i, is_reversed(i));
+        pros::Motor place(abs(i), is_reversed(i));
         left_motors.push_back(place);
     }
     for (int i : right_motor_ports) {
         NUM_RIGHT_MOTOR++;
-        pros::Motor place(i, is_reversed(i));
+        pros::Motor place(abs(i), is_reversed(i));
         right_motors.push_back(place);
     }
 

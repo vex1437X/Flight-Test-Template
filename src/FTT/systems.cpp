@@ -10,20 +10,20 @@ Systems::Systems(std::vector<int> intake_motor_ports, std::vector<int> colour_mo
     
     // Set ports to global motor vectors
     for (int i : intake_motor_ports) {
-        pros::Motor place(i, is_reversed(i));
+        pros::Motor place(abs(i), is_reversed(i));
         intake_motors.push_back(place);
     }
     for (int i : colour_motor_ports) {
-        pros::Motor place(i, is_reversed(i));
+        pros::Motor place(abs(i), is_reversed(i));
         colour_motors.push_back(place);
     }
     for (int i : catapult_motor_ports) {
-        pros::Motor place(i, is_reversed(i));
+        pros::Motor place(abs(i), is_reversed(i));
         catapult_motors.push_back(place);
     }
     for (int i : flywheel_motor_ports) {
         NUM_FLYWHEEL++;
-        pros::Motor place(i, is_reversed(i));
+        pros::Motor place(abs(i), is_reversed(i));
         flywheel_motors.push_back(place);
     }
     // Set limit switch port

@@ -59,6 +59,7 @@ Systems sys( // Leave port at 0 if that specific system is not present
 void initialize() {
 	delay(500);
 
+	// TODO: FIX AUTON
 	as::auton_selector.add_autons({
 		Auton("Auton1", auton1),
 		Auton("Auton2", auton2),
@@ -92,6 +93,7 @@ void opcontrol() {
 	Task SystemsCalc(Systems_task, nullptr); // used for flywheel adjustments // used for catapult resets // used for colour wheel
 
 	chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // change to whatever brake type (HOLD, COAST)
+	chassis.set_controller_threshold(5);	   // controller threshold -- limits controller drift
 
 	// Set system controls
 	sys.set_intake_buttons(E_CONTROLLER_DIGITAL_A, E_CONTROLLER_DIGITAL_A);
