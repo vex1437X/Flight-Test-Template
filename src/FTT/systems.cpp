@@ -83,6 +83,7 @@ void Systems::Systems_control() {
             set_intake(0);
             intaketoggleIN = false;
         }
+        pros::delay(350);
     }
 
     if (master.get_digital(INTAKE_OUT)){
@@ -93,6 +94,7 @@ void Systems::Systems_control() {
             set_intake(0);
             intaketoggleOUT = false;
         }
+        pros::delay(350);
     }
 
     if (master.get_digital(FLYWHEEL_SPIN)){
@@ -103,6 +105,7 @@ void Systems::Systems_control() {
             flytoggle = false;
             set_fly(0);
         }
+        pros::delay(350);
     }
 }
 
