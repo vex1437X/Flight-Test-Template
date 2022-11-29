@@ -27,7 +27,7 @@ void Drive::reset_PID_values(){
 void Drive::drive_pid(double target, double percent_speed){
     reset_drive_sensors();
     int dir = (target < 0) ? -1: 1; // driving direction (+1 for forwards; -1 for backwards)
-    double volt = percent_speed*1.27; // percent to voltage
+    double volt = abs(percent_speed*1.27)*dir; // percent to voltage
 
     // convert target inches into target encoder
     double TPI = get_tick_per_inch();
@@ -67,9 +67,8 @@ void Drive::drive_pid(double target, double percent_speed){
         D = d * driveD;
         H = headingError*2.5;
 
-        dir = (error < 0) ? -1 : 1;
-        lPower = dir*(volt + P + I + D - H);
-        rPower = dir*(volt + P + I + D + H);
+        lPower = volt + P + I + D - H;
+        rPower = volt + P + I + D + H;
         
         set_tank(lPower, rPower);
     }
@@ -87,8 +86,10 @@ void Drive::drive_pid(double target, double percent_speed){
         D = d * driveD;
 
         dir = (error < 0) ? -1 : 1; // should be -1
-        lPower = dir*(volt + P + I + D);
-        rPower = dir*(volt + P + I + D);
+        volt = abs(percent_speed*1.27)*dir;
+
+        lPower = volt + P + I + D;
+        rPower = volt + P + I + D;
         
         set_tank(lPower, rPower);
     }
@@ -105,8 +106,10 @@ void Drive::drive_pid(double target, double percent_speed){
         D = d * driveD;
 
         dir = (error < 0) ? -1 : 1; // should be 1
-        lPower = dir*(volt + P + I + D);
-        rPower = dir*(volt + P + I + D);
+        volt = abs(percent_speed*1.27)*dir;
+
+        lPower = volt + P + I + D;
+        rPower = volt + P + I + D;
         
         set_tank(lPower, rPower);
     }
@@ -129,8 +132,10 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
     double rPower = 0;
 
     double tolError = 0.05; // error tolerance
+    
 
     while (!(imu.get_heading() > target - tolError && imu.get_heading() < target + tolError)){
+
         prevError = error;
         error = target - imu.get_heading();
 
@@ -158,6 +163,7 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
         I = i * turnI;
         D = d * turnD;
 
+        direction *= -1;
         lPower = (volt + P + I + D)*-direction;
         rPower = (volt + P + I + D)*direction;
         
@@ -175,6 +181,7 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
         I = i * turnI;
         D = d * turnD;
 
+        direction *= -1;
         lPower = (volt + P + I + D)*direction;
         rPower = (volt + P + I + D)*-direction;
         
