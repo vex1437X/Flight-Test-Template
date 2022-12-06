@@ -136,6 +136,7 @@ void Drive::auton_pid_task(){
             enable_drive_pid = false;
         }
         x1 = 0;
+        pros::delay(10);
     }
     while(enable_turn_pid){
         if (!turn_init){
@@ -192,6 +193,7 @@ void Drive::auton_pid_task(){
             enable_turn_pid = false;
         }
         x1 = 0;
+        pros::delay(10);
     }
     pros::delay(10);
 }
