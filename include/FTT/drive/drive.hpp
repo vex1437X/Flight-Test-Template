@@ -198,6 +198,11 @@ class Drive {
     void reset_PID_values();
 
     /**
+     * Task for the PID loops being ran in Autonomous. Includes drive_pid and turn_pid
+     */
+    void auton_pid_task();
+
+    /**
      * @brief 
      * Drive for target amount
      * @param target 

@@ -24,39 +24,77 @@ void Drive::reset_PID_values(){
     turnD = 0;
 }
 
-void Drive::drive_pid(double target, double percent_speed){
+double drive_target = 0;
+double drive_percent_speed = 0;
+double turn_target = 0;
+double turn_percent_speed = 0;
+int turn_direction = 0;
+bool enable_drive_pid = false;
+bool enable_turn_pid = false;
+double volt = 0;
+int x1 = 0;
+
+bool drive_init = false;
+bool turn_init = false;
+
+int dir;
+double TPI;
+double tar;
+double error;
+double prevError;
+double P;
+double i;
+double I;
+double d;
+double D;
+double O;
+double Ol;
+double Or;
+double lPower;
+double rPower;
+double tolError;
+double headingInit;
+double headingError;
+int H;
+
+void Drive::auton_pid_task(){
     reset_drive_sensors();
-    int dir = (target < 0) ? -1: 1; // driving direction (+1 for forwards; -1 for backwards)
-    double volt = abs(percent_speed*1.27)*dir; // percent to voltage
+    x1 = 0;
+    drive_init = false;
+    turn_init = false;
+    drive_target = 0;
+    turn_target = 0;
+    while(enable_drive_pid){
+        if (!drive_init){
+            dir = (drive_target < 0) ? -1: 1; // driving direction (+1 for forwards; -1 for backwards)
+            volt = abs(drive_percent_speed*1.27)*dir; // percent to voltage
 
-    // convert target inches into target encoder
-    double TPI = get_tick_per_inch();
-    double tar = target * TPI; 
-    
-    double error = 0;
-    double prevError = 0;
-    double P = 0;
-    double i = 0;
-    double I = 0;
-    double d = 0;
-    double D = 0;
+            // convert target inches into target encoder
+            TPI = get_tick_per_inch();
+            tar = drive_target * TPI; 
 
-    double O = 0;
-    double Ol = 0;
-    double Or = 0;
+            error = 0;
+            prevError = 0;
+            P = 0;
+            i = 0;
+            I = 0;
+            d = 0;
+            D = 0;
 
-    double lPower = 0;
-    double rPower = 0;
+            O = 0;
+            Ol = 0;
+            Or = 0;
 
-    double tolError = (target/100) * TPI; // error tolerance
+            lPower = 0;
+            rPower = 0;
 
-    double headingInit = imu.get_heading();
-    double headingError = 0;
-    int H = 0;
+            tolError = (drive_target/100) * TPI; // error tolerance
 
-
-
-    while ( !(encs() > tar - tolError && encs() < tar + tolError)){
+            headingInit = imu.get_heading();
+            headingError = 0;
+            H = 0;
+            drive_init = true;
+        }
         prevError = error;
         error = tar - encs();
         headingError = headingInit - imu.get_heading(); // + --> right more power | - --> left more power
@@ -87,166 +125,104 @@ void Drive::drive_pid(double target, double percent_speed){
         rPower = Or;
 
         set_tank(lPower, rPower);
-    }
-
-    // Overshoot correction
-    while ((encs() > tar + tolError)){
-        prevError = error;
-        error = tar - encs();
-
-        i += error;
-        d = error - prevError;
-
-        P = error * driveP;
-        I = i * driveI;
-        D = d * driveD;
-
-        dir = (error < 0) ? -1 : 1; // should be -1
-        volt = abs(percent_speed*1.27)*dir;
         
-        // limit max speed
-        O = (abs(P + I + D) > abs(volt)) ? abs(volt)*dir : abs(P + I + D)*dir;
-        printf("O2: %f\n", O);
-
-        lPower = O;
-        rPower = O;
-
-        set_tank(lPower, rPower);
+        // exit case
+        while ((encs() > tar - tolError && encs() < tar + tolError) && x1 < 35){
+            x1++;
+            pros::delay(10);
+        }
+        if (x1>=35){
+            x1 = 0;
+            enable_drive_pid = false;
+        }
+        x1 = 0;
     }
-    // Undershoot correction
-     while ((encs() < tar - tolError)){
+    while(enable_turn_pid){
+        if (!turn_init){
+            volt = turn_percent_speed*1.27; // percent to voltage
+
+            error = 0;
+            prevError = 0;
+            P = 0;
+            i = 0;
+            I = 0;
+            d = 0;
+            D = 0;
+
+            O = 0;
+            Ol = 0;
+            Or = 0;
+
+            lPower = 0;
+            rPower = 0;
+
+            tolError = 0.05; // error tolerance
+            turn_init = true;
+        }
+
         prevError = error;
-        error = tar - encs();
+        error = turn_target - imu.get_heading();
 
         i += error;
         d = error - prevError;
 
-        P = error * driveP;
-        I = i * driveI;
-        D = d * driveD;
-
-        dir = (error < 0) ? -1 : 1; // should be 1
-        volt = abs(percent_speed*1.27)*dir;
+        P = error * turnP;
+        I = i * turnI;
+        D = d * turnD;
 
         // limit max speed
-        O = (abs(P + I + D) > abs(volt)) ? abs(volt)*dir : abs(P + I + D)*dir;
-        printf("O3: %f\n", O);
+        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*turn_direction : abs(P + I + D)*turn_direction;
+        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*-turn_direction : abs(P + I + D)*-turn_direction;
 
-        lPower = O;
-        rPower = O;
+        lPower = Ol;
+        rPower = Or;
+
+        // lPower = (volt + P + I + D)*direction;
+        // rPower = (volt + P + I + D)*-direction;
 
         set_tank(lPower, rPower);
+        
+        // exit case
+        while ((imu.get_heading() > turn_target - tolError && imu.get_heading() < turn_target + tolError) && x1 < 35){
+            x1++;
+            pros::delay(10);
+        }
+        if (x1>=35){
+            x1 = 0;
+            enable_turn_pid = false;
+        }
+        x1 = 0;
     }
-    off();
+    pros::delay(10);
+}
+
+
+
+
+
+
+void Drive::drive_pid(double target, double percent_speed){
+    drive_target = target;
+    drive_percent_speed = percent_speed;
+    enable_drive_pid = true;
 }
 
 void Drive::turn_pid(double target, double percent_speed, int direction){
-    reset_drive_sensors();
-    double volt = percent_speed*1.27; // percent to voltage
-
-    double error = 0;
-    double prevError = 0;
-    double P = 0;
-    double i = 0;
-    double I = 0;
-    double d = 0;
-    double D = 0;
-
-    double O = 0;
-    double Ol = 0;
-    double Or = 0;
-
-    double lPower = 0;
-    double rPower = 0;
-
-    double tolError = 0.05; // error tolerance
-    
-
-    while (!(imu.get_heading() > target - tolError && imu.get_heading() < target + tolError)){
-
-        prevError = error;
-        error = target - imu.get_heading();
-
-        i += error;
-        d = error - prevError;
-
-        P = error * turnP;
-        I = i * turnI;
-        D = d * turnD;
-
-        // limit max speed
-        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*direction : abs(P + I + D)*direction;
-        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*-direction : abs(P + I + D)*-direction;
-
-        lPower = Ol;
-        rPower = Or;
-
-        // lPower = (volt + P + I + D)*direction;
-        // rPower = (volt + P + I + D)*-direction;
-        
-        set_tank(lPower, rPower);
-    }
-    // Overshoot correction
-    while (imu.get_heading() > target + tolError){
-        prevError = error;
-        error = target - imu.get_heading();
-
-        i += error;
-        d = error - prevError;
-
-        P = error * turnP;
-        I = i * turnI;
-        D = d * turnD;
-
-        direction *= -1;
-        // lPower = (volt + P + I + D)*-direction;
-        // rPower = (volt + P + I + D)*direction;
-
-        // limit max speed
-        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*direction : abs(P + I + D)*direction;
-        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*-direction : abs(P + I + D)*-direction;
-
-        lPower = Ol;
-        rPower = Or;
-        
-        set_tank(lPower, rPower);
-    }
-    // Undershoot correcton
-    while (imu.get_heading() < target - tolError){
-        prevError = error;
-        error = target - imu.get_heading();
-
-        i += error;
-        d = error - prevError;
-
-        P = error * turnP;
-        I = i * turnI;
-        D = d * turnD;
-
-        direction *= -1;
-        // lPower = (volt + P + I + D)*direction;
-        // rPower = (volt + P + I + D)*-direction;
-
-        // limit max speed
-        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*direction : abs(P + I + D)*direction;
-        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*-direction : abs(P + I + D)*-direction;
-
-        lPower = Ol;
-        rPower = Or;
-        
-        set_tank(lPower, rPower);
-    }
-    off();
+    turn_target = target;
+    turn_percent_speed = percent_speed;
+    turn_direction = direction;
+    enable_turn_pid = true;
 }
 
 void Drive::settle_drive(){
-    off();
     reset_drive_sensors();
+    int x = 0;
     double prev = -10;
     double curr = encs();
-    while(prev != curr){
+    while(prev != curr && x < 30){
         prev = curr;
         curr = encs();
+        x++; 
         pros::delay(20);
     }
 }

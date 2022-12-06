@@ -55,6 +55,17 @@ Systems sys( // Leave port at 0 if that specific system is not present
 	// Place so colour wheel optical sensor is parallel with the inside of the colour wheel
 	0
 );
+void Auton_task(void*){ // just a feeder function // KEEP THIS OTHERWISE PID WONT WORK
+	while(true){
+		chassis.auton_pid_task();
+	}
+}
+void Systems_task(void*){ // just a feeder function // KEEP THIS
+	while (true){
+		sys.Systems_task();
+	}
+}
+
 
 void initialize() {
 	delay(500);
@@ -81,15 +92,11 @@ void autonomous() {
 	chassis.reset_gyro(); // Reset gyro position to 0
 	chassis.reset_drive_sensors(); // Reset drive sensors to 0
 	chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
-
+	Task AutonsPID(Auton_task, nullptr); // always make sure this is before your auton is being called
 	as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
 }
 
-void Systems_task(void*){ // just a feeder function // KEEP THIS
-	while (true){
-		sys.Systems_task();
-	}
-}
+
 
 void opcontrol() {
 	Task SystemsCalc(Systems_task, nullptr); // used for flywheel adjustments // used for catapult resets // used for colour wheel
