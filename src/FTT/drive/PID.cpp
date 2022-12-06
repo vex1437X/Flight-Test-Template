@@ -41,6 +41,10 @@ void Drive::drive_pid(double target, double percent_speed){
     double d = 0;
     double D = 0;
 
+    double O = 0;
+    double Ol = 0;
+    double Or = 0;
+
     double lPower = 0;
     double rPower = 0;
 
@@ -65,11 +69,23 @@ void Drive::drive_pid(double target, double percent_speed){
         P = error * driveP;
         I = i * driveI;
         D = d * driveD;
-        H = headingError*2.5;
+        H = headingError;
 
-        lPower = volt + P + I + D - H;
-        rPower = volt + P + I + D + H;
-        
+        printf("P: %f \n", P);
+        printf("I: %f\n", I);
+        printf("D: %f\n", D);
+
+        // lPower = volt + P + I + D - H;
+        // rPower = volt + P + I + D + H;
+
+        // limit max speed
+        Ol = (abs(P + I + D - H) > abs(volt)) ? abs(volt)*dir : abs(P + I + D - H)*dir;
+        Or = (abs(P + I + D + H) > abs(volt)) ? abs(volt)*dir : abs(P + I + D + H)*dir;
+        printf("O1: %f\n", O);
+
+        lPower = Ol;
+        rPower = Or;
+
         set_tank(lPower, rPower);
     }
 
@@ -87,10 +103,14 @@ void Drive::drive_pid(double target, double percent_speed){
 
         dir = (error < 0) ? -1 : 1; // should be -1
         volt = abs(percent_speed*1.27)*dir;
-
-        lPower = volt + P + I + D;
-        rPower = volt + P + I + D;
         
+        // limit max speed
+        O = (abs(P + I + D) > abs(volt)) ? abs(volt)*dir : abs(P + I + D)*dir;
+        printf("O2: %f\n", O);
+
+        lPower = O;
+        rPower = O;
+
         set_tank(lPower, rPower);
     }
     // Undershoot correction
@@ -108,9 +128,13 @@ void Drive::drive_pid(double target, double percent_speed){
         dir = (error < 0) ? -1 : 1; // should be 1
         volt = abs(percent_speed*1.27)*dir;
 
-        lPower = volt + P + I + D;
-        rPower = volt + P + I + D;
-        
+        // limit max speed
+        O = (abs(P + I + D) > abs(volt)) ? abs(volt)*dir : abs(P + I + D)*dir;
+        printf("O3: %f\n", O);
+
+        lPower = O;
+        rPower = O;
+
         set_tank(lPower, rPower);
     }
     off();
@@ -127,6 +151,10 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
     double I = 0;
     double d = 0;
     double D = 0;
+
+    double O = 0;
+    double Ol = 0;
+    double Or = 0;
 
     double lPower = 0;
     double rPower = 0;
@@ -146,8 +174,15 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
         I = i * turnI;
         D = d * turnD;
 
-        lPower = (volt + P + I + D)*direction;
-        rPower = (volt + P + I + D)*-direction;
+        // limit max speed
+        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*direction : abs(P + I + D)*direction;
+        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*-direction : abs(P + I + D)*-direction;
+
+        lPower = Ol;
+        rPower = Or;
+
+        // lPower = (volt + P + I + D)*direction;
+        // rPower = (volt + P + I + D)*-direction;
         
         set_tank(lPower, rPower);
     }
@@ -164,8 +199,15 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
         D = d * turnD;
 
         direction *= -1;
-        lPower = (volt + P + I + D)*-direction;
-        rPower = (volt + P + I + D)*direction;
+        // lPower = (volt + P + I + D)*-direction;
+        // rPower = (volt + P + I + D)*direction;
+
+        // limit max speed
+        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*direction : abs(P + I + D)*direction;
+        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*-direction : abs(P + I + D)*-direction;
+
+        lPower = Ol;
+        rPower = Or;
         
         set_tank(lPower, rPower);
     }
@@ -182,8 +224,15 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
         D = d * turnD;
 
         direction *= -1;
-        lPower = (volt + P + I + D)*direction;
-        rPower = (volt + P + I + D)*-direction;
+        // lPower = (volt + P + I + D)*direction;
+        // rPower = (volt + P + I + D)*-direction;
+
+        // limit max speed
+        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*direction : abs(P + I + D)*direction;
+        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*-direction : abs(P + I + D)*-direction;
+
+        lPower = Ol;
+        rPower = Or;
         
         set_tank(lPower, rPower);
     }
