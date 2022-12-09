@@ -190,7 +190,7 @@ void Systems::spinRed(){ // spin until blue is bottom
 
 void Systems::spinBlue(){ // spin until red is bottom
     int exit = 0;
-    while((!(get_colourW_hue() > 360 - 100 && get_colourW_hue() < redHue + 100)) && exit < 1000){
+    while((!(get_colourW_hue() > 360 - 100 || get_colourW_hue() < redHue + 100)) && exit < 1000){
         set_colour(abs(COLOUR_SPEED)*-1);
         exit++;
     }
@@ -198,7 +198,7 @@ void Systems::spinBlue(){ // spin until red is bottom
 }
 
 bool Systems::isRed(){
-    if (get_plate_hue() > 360 - 100 && get_plate_hue() < redHue + 100){
+    if (get_plate_hue() > 360 - 100 || get_plate_hue() < redHue + 100){
         return true;
     } else {
         return false;
