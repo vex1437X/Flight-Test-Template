@@ -109,17 +109,9 @@ void Drive::auton_pid_task(){
         D = d * driveD;
         H = headingError;
 
-        printf("P: %f \n", P);
-        printf("I: %f\n", I);
-        printf("D: %f\n", D);
-
-        // lPower = volt + P + I + D - H;
-        // rPower = volt + P + I + D + H;
-
         // limit max speed
         Ol = (abs(P + I + D - H) > abs(volt)) ? abs(volt)*dir : abs(P + I + D - H)*dir;
         Or = (abs(P + I + D + H) > abs(volt)) ? abs(volt)*dir : abs(P + I + D + H)*dir;
-        printf("O1: %f\n", O);
 
         lPower = Ol;
         rPower = Or;
@@ -127,13 +119,14 @@ void Drive::auton_pid_task(){
         set_tank(lPower, rPower);
         
         // exit case
-        while ((encs() > tar - tolError && encs() < tar + tolError) && x1 < 35){
+        while ((encs() > tar - tolError && encs() < tar + tolError) && x1 < 30){
             x1++;
             pros::delay(10);
         }
-        if (x1>=35){
+        if (x1>=30){
             x1 = 0;
             enable_drive_pid = false;
+            drive_init = false;
         }
         x1 = 0;
         pros::delay(10);
@@ -173,35 +166,28 @@ void Drive::auton_pid_task(){
 
         // limit max speed
         Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*turn_direction : abs(P + I + D)*turn_direction;
-        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*-turn_direction : abs(P + I + D)*-turn_direction;
+        Or = (abs(P + I + D) > abs(volt)) ? abs(volt)*-turn_direction : abs(P + I + D)*-turn_direction;
 
         lPower = Ol;
         rPower = Or;
 
-        // lPower = (volt + P + I + D)*direction;
-        // rPower = (volt + P + I + D)*-direction;
-
         set_tank(lPower, rPower);
         
         // exit case
-        while ((imu.get_heading() > turn_target - tolError && imu.get_heading() < turn_target + tolError) && x1 < 35){
+        while ((imu.get_heading() > turn_target - tolError && imu.get_heading() < turn_target + tolError) && x1 < 30){
             x1++;
             pros::delay(10);
         }
-        if (x1>=35){
+        if (x1>=30){
             x1 = 0;
             enable_turn_pid = false;
+            turn_init = false;
         }
         x1 = 0;
         pros::delay(10);
     }
     pros::delay(10);
 }
-
-
-
-
-
 
 void Drive::drive_pid(double target, double percent_speed){
     drive_target = target;
