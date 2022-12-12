@@ -225,6 +225,6 @@ void Drive::settle_drive(){
         prev = curr;
         curr = encs();
         x++; 
-        pros::delay(20);
+        pros::delay(10);
     }
 }

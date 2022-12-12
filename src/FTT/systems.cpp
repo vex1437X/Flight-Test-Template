@@ -43,14 +43,14 @@ Systems::Systems(std::vector<int> intake_motor_ports, std::vector<int> colour_mo
 
 void Systems::set_intake(double percent) {
     for (pros::Motor i : intake_motors) {
-        i.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        i.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
         i.move(127*(percent/100));
     }
 }
 
 void Systems::set_colour(double percent) {
     for (pros::Motor i : colour_motors) {
-        i.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+        i.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
         i.move(127*(percent/100));
     }
 }
@@ -184,6 +184,7 @@ void Systems::spinRed(){ // spin until blue is bottom
     while((!(get_colourW_hue() > blueHue - 100 && get_colourW_hue() < blueHue + 100)) && exit < 1000){
         set_colour(abs(COLOUR_SPEED)*-1);
         exit++;
+        pros::delay(10);
     }
     set_colour(0);
 }
@@ -193,6 +194,7 @@ void Systems::spinBlue(){ // spin until red is bottom
     while((!(get_colourW_hue() > 360 - 100 || get_colourW_hue() < redHue + 100)) && exit < 1000){
         set_colour(abs(COLOUR_SPEED)*-1);
         exit++;
+        pros::delay(10);
     }
     set_colour(0);
 }
@@ -243,9 +245,9 @@ void Systems::Systems_task() { // BEING RAN IN MAIN
     // Colour wheel control
 
     if (master.get_digital(COLOUR_SPIN)){
-        if (get_colourW_prox() < 30){
+        // if (get_colourW_prox() < 30){
             spinColour();
-        }
+        // }
     }
     pros::delay(10);
 }
