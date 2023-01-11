@@ -55,6 +55,7 @@ Systems sys( // Leave port at 0 if that specific system is not present
 	// Place so colour wheel optical sensor is parallel with the inside of the colour wheel
 	0
 );
+
 void Auton_task(void*){ // just a feeder function // KEEP THIS OTHERWISE PID WONT WORK
 	while(true){
 		chassis.auton_pid_task();
@@ -66,8 +67,13 @@ void Systems_task(void*){ // just a feeder function // KEEP THIS
 	}
 }
 
+Task AutonsPID(Auton_task, nullptr); // always make sure this is before your auton is being called
+Task SystemsCalc(Systems_task, nullptr); // used for flywheel adjustments // used for catapult resets // used for colour wheel
+
 
 void initialize() {
+	AutonsPID.suspend();
+	SystemsCalc.suspend();
 	delay(500);
 
 	// TODO: FIX AUTON
@@ -92,14 +98,17 @@ void autonomous() {
 	chassis.reset_gyro(); // Reset gyro position to 0
 	chassis.reset_drive_sensors(); // Reset drive sensors to 0
 	chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
-	Task AutonsPID(Auton_task, nullptr); // always make sure this is before your auton is being called
+	AutonsPID.resume();
+	SystemsCalc.resume();
 	as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
 }
 
 
 
 void opcontrol() {
-	Task SystemsCalc(Systems_task, nullptr); // used for flywheel adjustments // used for catapult resets // used for colour wheel
+	SystemsCalc.resume();
+	AutonsPID.suspend(); // stop the auton PID
+	AutonsPID.remove();
 
 	chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // change to whatever brake type (HOLD, COAST)
 	chassis.set_controller_threshold(0);	   // controller threshold -- limits controller drift

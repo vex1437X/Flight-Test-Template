@@ -32,10 +32,27 @@ Drive::Drive(std::vector<int> left_motor_ports, std::vector<int> right_motor_por
     TICK_PER_INCH = get_tick_per_inch();
 }
 
+double Drive::get_locked_heading() {
+    double ret = 0;
+    if (imu.get_heading() >= 360){
+        ret = imu.get_heading() - 360;
+    } else if (imu.get_heading() < 0){
+        ret = imu.get_heading() + 360;
+    } else {
+        ret = imu.get_heading();
+        if (ret > 359.5) ret = 0;
+    }
+    return ret;
+}
+
 double Drive::get_tick_per_inch() {
     CIRCUMFERENCE = WHEEL_DIAMETER * M_PI;
-
-    TICK_PER_REV = (50.0 * (3600.0 / CARTRIDGE)) * RATIO;
+    int TICKPERCART = 0;
+    if (CARTRIDGE >= 600) {TICKPERCART = 300;}
+    else if (CARTRIDGE >= 200) {TICKPERCART = 900;}
+    else if (CARTRIDGE >= 0) {TICKPERCART = 1800;}
+    // TICK_PER_REV = (50.0 * (3600.0 / CARTRIDGE)) * RATIO;
+    TICK_PER_REV = TICKPERCART * RATIO * 4;
 
     TICK_PER_INCH = (TICK_PER_REV / CIRCUMFERENCE);
     return TICK_PER_INCH;

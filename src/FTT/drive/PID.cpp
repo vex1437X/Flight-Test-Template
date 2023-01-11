@@ -34,6 +34,9 @@ bool enable_turn_pid = false;
 double volt = 0;
 int x1 = 0;
 
+bool startlow;
+bool nowlow;
+
 bool drive_init = false;
 bool turn_init = false;
 
@@ -57,15 +60,14 @@ double headingInit;
 double headingError;
 int H;
 
+bool test = false;
+
 void Drive::auton_pid_task(){
-    reset_drive_sensors();
-    x1 = 0;
-    drive_init = false;
-    turn_init = false;
-    drive_target = 0;
-    turn_target = 0;
+    printf("v\n");
     while(enable_drive_pid){
+        printf("driv\n");
         if (!drive_init){
+            reset_drive_sensors();
             dir = (drive_target < 0) ? -1: 1; // driving direction (+1 for forwards; -1 for backwards)
             volt = abs(drive_percent_speed*1.27)*dir; // percent to voltage
 
@@ -88,16 +90,18 @@ void Drive::auton_pid_task(){
             lPower = 0;
             rPower = 0;
 
-            tolError = (drive_target/100) * TPI; // error tolerance
+            tolError = (drive_target/200) * TPI; // error tolerance
 
-            headingInit = imu.get_heading();
+            headingInit = get_locked_heading();
             headingError = 0;
             H = 0;
             drive_init = true;
+            
         }
+        // tar = drive_target * TPI;
         prevError = error;
         error = tar - encs();
-        headingError = headingInit - imu.get_heading(); // + --> right more power | - --> left more power
+        headingError = headingInit - get_locked_heading(); // + --> right more power | - --> left more power
         if (headingError < -180){headingError += 360;}
         else if(headingError > 180){headingError -= 360;}
 
@@ -123,16 +127,22 @@ void Drive::auton_pid_task(){
             x1++;
             pros::delay(10);
         }
-        if (x1>=30){
+        if (x1>=30 && !drive_init){
+            off();
             x1 = 0;
             enable_drive_pid = false;
             drive_init = false;
+            drive_target = 0;
         }
         x1 = 0;
         pros::delay(10);
     }
     while(enable_turn_pid){
+        printf("tur\n");
         if (!turn_init){
+            reset_drive_sensors();
+            dir = turn_direction; // turning direction (+1 for clockwise; -1 for counterclockwise)
+            printf("startDIR: %d \n", dir);
             volt = turn_percent_speed*1.27; // percent to voltage
 
             error = 0;
@@ -150,12 +160,22 @@ void Drive::auton_pid_task(){
             lPower = 0;
             rPower = 0;
 
-            tolError = 0.05; // error tolerance
+            double pre = (dir == -1 && get_locked_heading() < 0.25) ? 359.999 : get_locked_heading(); // used just for startlow calc
+
+            startlow = pre < turn_target ? true : false;
+
+            tolError = 0.1; // error tolerance
+            test = false;
             turn_init = true;
         }
 
         prevError = error;
-        error = turn_target - imu.get_heading();
+        error = turn_target - get_locked_heading();
+        printf("Error: %f \n", error);
+        printf("Heading: %f \n", get_locked_heading());
+        printf("Target: %f \n", turn_target);
+
+        printf("Direction: %d \n", dir);
 
         i += error;
         d = error - prevError;
@@ -164,24 +184,45 @@ void Drive::auton_pid_task(){
         I = i * turnI;
         D = d * turnD;
 
+        printf("P: %f \n", P);
+        printf("I: %f\n", I);
+        printf("D: %f\n", D);
+
+        double pre = (dir == -1 && get_locked_heading() < 0.25) ? 359.999 : get_locked_heading(); // used just for startlow calc
+        nowlow = pre < turn_target ? true : false;
+        if (!test){
+            if (nowlow != startlow) dir*=-1;
+            test = true;
+        }
+
         // limit max speed
-        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt)*turn_direction : abs(P + I + D)*turn_direction;
-        Or = (abs(P + I + D) > abs(volt)) ? abs(volt)*-turn_direction : abs(P + I + D)*-turn_direction;
+        Ol = (abs(P + I + D) > abs(volt)) ? abs(volt) : P + I + D;
+        Or = (abs(P + I + D) > abs(volt)) ? abs(volt) : P + I + D;
+        // limit min speed
+        Ol = (abs(Ol) < 4) ? 4 : Ol;
+        Or = (abs(Or) < 4) ? 4 : Or;
+        // printf("pow%f\n", Ol);
+        // printf("OTleft: %f\n", Ol);
+        // printf("OTright: %f\n", Or);
+
+        printf("Direction: %d \n", dir);
 
         lPower = Ol;
-        rPower = Or;
+        rPower = -Or;
 
         set_tank(lPower, rPower);
         
         // exit case
-        while ((imu.get_heading() > turn_target - tolError && imu.get_heading() < turn_target + tolError) && x1 < 30){
+        while ((get_locked_heading() > turn_target - tolError && get_locked_heading() < turn_target + tolError) && x1 < 30){
             x1++;
             pros::delay(10);
         }
-        if (x1>=30){
+        if (x1>=30 && !turn_init){
+            off();
             x1 = 0;
             enable_turn_pid = false;
             turn_init = false;
+            turn_target = 0;
         }
         x1 = 0;
         pros::delay(10);
@@ -203,14 +244,13 @@ void Drive::turn_pid(double target, double percent_speed, int direction){
 }
 
 void Drive::settle_drive(){
-    reset_drive_sensors();
     int x = 0;
-    double prev = -10;
+    double prev = encs()+10;
     double curr = encs();
-    while(prev != curr && x < 30){
+    while(x < 100){
         prev = curr;
         curr = encs();
-        x++; 
+        if (prev == curr) x++;
         pros::delay(10);
     }
 }

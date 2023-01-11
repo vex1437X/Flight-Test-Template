@@ -118,6 +118,13 @@ class Drive {
     void set_heading(int heading); 
 
     /**
+     * @brief Get the locked heading of the robot.
+     * 
+     * @return double [0, 359.999]
+     */
+    double get_locked_heading();
+
+    /**
      * Calibrates the inertial sensor.
      */
     bool imu_calibrate();
