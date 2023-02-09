@@ -6,6 +6,7 @@
 
 // #include "FTT/PID.hpp"
 #include "FTT/util.hpp"
+#include "pros/adi.hpp"
 #include "pros/motors.h"
 
 using namespace ftt;
@@ -31,6 +32,11 @@ class Systems {
      * Vector of motors for the flywheel motors.
      */
     std::vector<pros::Motor> flywheel_motors;
+   
+    /**
+     * Vector of ports for SpinUp expansion
+     */
+    std::vector<pros::ADIDigitalOut> expansion_pneumatics;
 
     /**
      * Catapult limit switch
@@ -54,7 +60,7 @@ class Systems {
     Systems(std::vector<int> intake_motor_ports, std::vector<int> colour_motor_ports, 
             std::vector<int> catapult_motor_ports, std::vector<int> flywheel_motor_ports, 
             int flywheel_CARTRIDGE, int catapult_limit_switch_port, int plate_optical_port, 
-            int colourwheel_optical_port);
+            int colourwheel_optical_port, std::vector<int> expansion_ports);
 
      /**
      * Sets the chassis to voltage
@@ -98,6 +104,16 @@ class Systems {
     */
     void set_fly(double percent);
 
+    /**
+    * @brief Sets the mode for the expansion pneumatics
+    * 
+    * @param value 
+    * true/false ----
+    * true - on || false - off
+    */
+    void set_expansion_pneumatics(bool value);
+
+
     /***
      * Control systems. Use in driver control.
     */
@@ -128,6 +144,13 @@ class Systems {
      */
     pros::controller_digital_e_t FLYWHEEL_SPIN;
 
+    /**
+     * Global current expansion button
+     */
+    pros::controller_digital_e_t EXPAND;
+
+    
+
     /***
      * Sets the buttons to toggle the intake motors
      * @param in
@@ -152,6 +175,11 @@ class Systems {
      * Sets the button to spin the flywheel motors
     */
     void set_flywheel_button(pros::controller_digital_e_t button);
+
+    /***
+     * Sets the button to activate the expansion pneumatics
+    */
+    void set_expansion_button(pros::controller_digital_e_t button);
 
     /***
      * Systems task. Used for calculations and adjustments for flywheel & catapult. Use in driver control.
@@ -205,6 +233,13 @@ class Systems {
      *  in percent
     */
     void set_colourwheel_speed(double percent);
+
+   /**
+    * @brief Set the brake type on the catapult motors
+    * 
+    * @param brake_mode 
+    */
+    void set_cata_mode(pros::motor_brake_mode_e brake_mode);
 
 
 

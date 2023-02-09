@@ -53,7 +53,11 @@ Systems sys( // Leave port at 0 if that specific system is not present
 
 	// Colour wheel optical sensor port
 	// Place so colour wheel optical sensor is parallel with the inside of the colour wheel
-	0
+	0,
+
+	// Expansion eneumatics ports
+	// A = 1; B = 2; C = 3; etc...
+	{0}
 );
 
 void Auton_task(void*){ // just a feeder function // KEEP THIS OTHERWISE PID WONT WORK
@@ -86,7 +90,7 @@ void initialize() {
 	// initialise chassis and auton selector
 	chassis.initialise();
 	chassis.reset_PID_values();
-	as::initialise();
+	as::auton_selector.initialise();
 }
 
 
@@ -114,10 +118,10 @@ void opcontrol() {
 	chassis.set_controller_threshold(0);	   // controller threshold -- limits controller drift
 
 	// Set system controls
-	sys.set_intake_buttons(E_CONTROLLER_DIGITAL_A, E_CONTROLLER_DIGITAL_A);
-	sys.set_colourwheel_button(E_CONTROLLER_DIGITAL_A);
-	sys.set_cata_button(E_CONTROLLER_DIGITAL_A);
-	sys.set_flywheel_button(E_CONTROLLER_DIGITAL_A);
+	sys.set_intake_buttons(DIGITAL_A, DIGITAL_A);
+	sys.set_colourwheel_button(DIGITAL_A);
+	sys.set_cata_button(DIGITAL_A);
+	sys.set_flywheel_button(DIGITAL_A);
 
 	// Set system speeds
 	// ALL IN PERCENT (0 to 100)

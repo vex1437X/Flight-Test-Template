@@ -16,4 +16,5 @@ class AutonSelector {
   void call_selected_auton();
   void print_selected_auton();
   void add_autons(std::vector<Auton> autons);
+  void initialise();
 };

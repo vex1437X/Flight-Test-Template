@@ -226,10 +226,8 @@ class Drive {
      * Target turn (in degrees; 0 to 359.999)
      * @param percent_speed 
      * Turning speed (in percent; 0 to 100)
-     * @param direction
-     * Turning direction (counter-clockwise or clockwise; -1 or +1)
      */
-    void turn_pid(double target, double percent_speed, int direction);
+    void turn_pid(double target, double percent_speed);
 
     /**
      * @brief

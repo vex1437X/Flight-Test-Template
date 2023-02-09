@@ -6,7 +6,7 @@ using namespace ftt;
 
 Systems::Systems(std::vector<int> intake_motor_ports, std::vector<int> colour_motor_ports, 
         std::vector<int> catapult_motor_ports, std::vector<int> flywheel_motor_ports, int flywheel_CARTRIDGE, 
-        int catapult_limit_switch_port, int plate_optical_port, int colourwheel_optical_port){
+        int catapult_limit_switch_port, int plate_optical_port, int colourwheel_optical_port, std::vector<int> expansion_ports){
     
     // Set ports to global motor vectors
     for (int i : intake_motor_ports) {
@@ -25,6 +25,10 @@ Systems::Systems(std::vector<int> intake_motor_ports, std::vector<int> colour_mo
         NUM_FLYWHEEL++;
         pros::Motor place(abs(i), is_reversed(i));
         flywheel_motors.push_back(place);
+    }
+    for (int i : expansion_ports) {
+        pros::ADIDigitalOut place(abs(i));
+        expansion_pneumatics.push_back(place);
     }
     // Set limit switch port
     pros::ADIDigitalIn place(catapult_limit_switch_port);
@@ -62,17 +66,29 @@ void Systems::set_cata(double percent) {
     }
 }
 
+void Systems::set_cata_mode(pros::motor_brake_mode_e brake_mode) {
+    for (pros::Motor i : catapult_motors) {
+        i.set_brake_mode(brake_mode);
+    }
+}
+
 void Systems::set_fly(double percent) {
     for (pros::Motor i : flywheel_motors) {
         i.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
         i.move(127*(percent/100));
     }
-    
+}
+
+void Systems::set_expansion_pneumatics(bool value){
+    for (pros::ADIDigitalOut i : expansion_pneumatics) {
+        i.set_value(value);
+    }
 }
 
 bool intaketoggleIN = false;
 bool intaketoggleOUT = false;
 bool flytoggle = false;
+bool expand = false;
 
 void Systems::Systems_control() {
     if (master.get_digital(INTAKE_IN)){
@@ -107,6 +123,17 @@ void Systems::Systems_control() {
         }
         pros::delay(350);
     }
+
+    if (master.get_digital(EXPAND)){
+        if (expand == false){
+            set_expansion_pneumatics(true);
+            expand = true;
+        } else if (expand == true){
+            set_expansion_pneumatics(false);
+            expand = false;
+        }
+        pros::delay(350);
+    }
 }
 
 double Systems::getActRPM(){
@@ -116,8 +143,6 @@ double Systems::getActRPM(){
     }
     return rpm/NUM_FLYWHEEL;
 }
-
-
 
 // private
 bool didReach = false;
@@ -135,16 +160,27 @@ void Systems::cataFor(double sec, int percent){
 }
 
 void Systems::resetCata(){
-  while(!get_cataLimit_value() && !didReach) {
-    set_cata(-100);
-  }
-  didReach = true;
-  set_cata(0);
+    while(!didReach){
+        set_cata_mode(MOTOR_BRAKE_COAST);
+        set_cata(abs(100)*-1);
+        if (get_cataLimit_value()){
+            didReach = true;
+            set_cata(0);
+            pros::delay(10);
+            set_cata_mode(MOTOR_BRAKE_BRAKE);
+            pros::delay(1000);
+            set_cata_mode(MOTOR_BRAKE_COAST);
+            return;   
+        }
+        pros::delay(10);
+    }
 }
 
 void Systems::fireCata(){
   if(didReach){
-    cataFor(0.5, -100);
+    set_cata_mode(MOTOR_BRAKE_COAST);
+    set_intake(0);
+    cataFor(0.2, -100);
   }
   didReach = false;
 }
@@ -218,8 +254,11 @@ void Systems::spinColour(){
 double targetRPM = 0;
 double mV = 0;
 double exMV = 0;
+bool fst = true;
 
 void Systems::Systems_task() { // BEING RAN IN MAIN
+    if(fst){ pros::delay(500); fst = false;} // allow initialise time before activating anything
+
     // Simple P loop for flywheel INTERNAL RPM
     if (flytoggle){
         // * voltage/rpm correction *
@@ -249,6 +288,7 @@ void Systems::Systems_task() { // BEING RAN IN MAIN
             spinColour();
         // }
     }
+
     pros::delay(10);
 }
 
@@ -283,4 +323,8 @@ void Systems::set_cata_button(pros::controller_digital_e_t button) {
 
 void Systems::set_flywheel_button(pros::controller_digital_e_t button) {
     FLYWHEEL_SPIN = button;
+}
+
+void Systems::set_expansion_button(pros::controller_digital_e_t button) {
+    EXPAND = button;
 }
