@@ -4,6 +4,7 @@ Easy to use VEX Pros template
 - Driver Control (tank / arcade)
 - Drive PID
 - Turn PID
+- Auton Selector
 - Team colour check
 - Spin colour wheel to correct colour (no extra code needed)
 ## Subsystems
