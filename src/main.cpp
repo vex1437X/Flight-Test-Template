@@ -80,7 +80,7 @@ void initialize() {
 	SystemsCalc.suspend();
 	delay(500);
 
-	// TODO: FIX AUTON
+
 	as::auton_selector.add_autons({
 		Auton("Auton1", auton1),
 		Auton("Auton2", auton2),

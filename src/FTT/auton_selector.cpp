@@ -4,6 +4,9 @@
 #include "pros/misc.h"
 #include "pros/screen.h"
 #include "pros/screen.hpp"
+#include "FTT/drive/drive.hpp"
+using namespace ftt;
+
 
 #define BRAIN_WIDTH 480
 #define BRAIN_HEIGHT 272
@@ -47,7 +50,7 @@ void AutonSelector::initialise(){
     pros::screen::set_pen(COLOR_BLUE_VIOLET);
     pros::c::screen_set_pen(COLOR_BLUE_VIOLET);
     const char * c = Autons[current_auton_page].Name.c_str();
-    pros::c::screen_print_at(pros::E_TEXT_LARGE, BRAIN_WIDTH/4, BRAIN_HEIGHT/2, c);
+    pros::c::screen_print_at(pros::E_TEXT_LARGE, BRAIN_WIDTH/3, BRAIN_HEIGHT/3, c);
   }
   while (true){
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)){
@@ -58,21 +61,21 @@ void AutonSelector::initialise(){
         pros::screen::fill_rect(0, 0, BRAIN_WIDTH, BRAIN_HEIGHT);
         pros::screen::set_pen(COLOR_BLUE_VIOLET);
         pros::c::screen_set_pen(COLOR_BLUE_VIOLET);
-        const char * c = Autons[current_auton_page].Name.c_str();
-        pros::c::screen_print_at(pros::E_TEXT_LARGE, BRAIN_WIDTH/4, BRAIN_HEIGHT/2, c);
+        const char * d = Autons[current_auton_page].Name.c_str();
+        pros::c::screen_print_at(pros::E_TEXT_LARGE, BRAIN_WIDTH/3, BRAIN_HEIGHT/3, d);
       }
       pros::delay(350);
     }
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)){
       if((current_auton_page + 1) < auton_count){
-        current_auton_page--;
+        current_auton_page++;
         pros::screen::set_pen(COLOR_BLACK);
         pros::screen::draw_rect(0, 0, BRAIN_WIDTH, BRAIN_HEIGHT);
         pros::screen::fill_rect(0, 0, BRAIN_WIDTH, BRAIN_HEIGHT);
         pros::screen::set_pen(COLOR_BLUE_VIOLET);
         pros::c::screen_set_pen(COLOR_BLUE_VIOLET);
-        const char * c = Autons[current_auton_page].Name.c_str();
-        pros::c::screen_print_at(pros::E_TEXT_LARGE, BRAIN_WIDTH/4, BRAIN_HEIGHT/2, c);
+        const char * f = Autons[current_auton_page].Name.c_str();
+        pros::c::screen_print_at(pros::E_TEXT_LARGE, BRAIN_WIDTH/3, BRAIN_HEIGHT/3, f);
       }
       pros::delay(350);
     }
