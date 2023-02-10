@@ -76,7 +76,8 @@ bin/FTT/sd.cpp.o: src/FTT/sd.cpp include/main.h include/api.h \
  include/pros/vision.hpp include/pros/vision.h include/FTT/head.hpp \
  include/FTT/util.hpp include/FTT/drive/drive.hpp include/FTT/auton.hpp \
  include/FTT/auton_selector.hpp include/FTT/sd.hpp \
- include/FTT/systems.hpp include/pros/adi.hpp include/autons.hpp
+ include/FTT/systems.hpp include/pros/adi.hpp include/FTT/skills.hpp \
+ include/autons.hpp
 include/main.h:
 include/api.h:
 include/pros/adi.h:
@@ -233,4 +234,5 @@ include/FTT/auton_selector.hpp:
 include/FTT/sd.hpp:
 include/FTT/systems.hpp:
 include/pros/adi.hpp:
+include/FTT/skills.hpp:
 include/autons.hpp:

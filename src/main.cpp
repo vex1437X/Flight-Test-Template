@@ -28,7 +28,7 @@ Drive chassis(
 	0.0
 );
 
-Systems sys( // Leave port at 0 if that specific system is not present
+Systems sys( // Leave port at 0 if that specific subsystem is not present
 	// Intake Ports (negative port will reverse)
 	{0, 0},
 
@@ -58,6 +58,11 @@ Systems sys( // Leave port at 0 if that specific system is not present
 	// Expansion eneumatics ports
 	// A = 1; B = 2; C = 3; etc...
 	{0}
+);
+
+Skills skl(
+	// GPS Sensor Port
+	0
 );
 
 void Auton_task(void*){ // just a feeder function // KEEP THIS OTHERWISE PID WONT WORK
@@ -90,6 +95,7 @@ void initialize() {
 	// initialise chassis and auton selector
 	chassis.initialise();
 	chassis.reset_PID_values();
+	skl.initialise();
 	as::auton_selector.initialise();
 	while (true){
 		as::auton_selector.run();
