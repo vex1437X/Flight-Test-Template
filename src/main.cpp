@@ -91,6 +91,9 @@ void initialize() {
 	chassis.initialise();
 	chassis.reset_PID_values();
 	as::auton_selector.initialise();
+	while (true){
+		as::auton_selector.run();
+	}
 }
 
 

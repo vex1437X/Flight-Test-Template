@@ -52,7 +52,10 @@ void AutonSelector::initialise(){
     const char * c = Autons[current_auton_page].Name.c_str();
     pros::c::screen_print_at(pros::E_TEXT_LARGE, BRAIN_WIDTH/3, BRAIN_HEIGHT/3, c);
   }
-  while (true){
+}
+
+void AutonSelector::run(){
+  // while (true){
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)){
       if (current_auton_page > 0){
         current_auton_page--;
@@ -80,5 +83,5 @@ void AutonSelector::initialise(){
       pros::delay(350);
     }
     pros::delay(10);
-  }
+  // }
 }
