@@ -284,9 +284,9 @@ void Systems::Systems_task() { // BEING RAN IN MAIN
     // Colour wheel control
 
     if (master.get_digital(COLOUR_SPIN)){
-        if (get_colourW_prox() < 15){
+        // if (get_colourW_prox() < 15){
             spinColour();
-        }
+        // }
     }
 
     pros::delay(10);
