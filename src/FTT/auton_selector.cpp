@@ -55,8 +55,8 @@ void AutonSelector::initialise(){
 }
 
 void AutonSelector::run(){
-  // while (true){
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)){
+  while (true){
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT) || master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)){
       if (current_auton_page > 0){
         current_auton_page--;
         pros::screen::set_pen(COLOR_BLACK);
@@ -69,7 +69,7 @@ void AutonSelector::run(){
       }
       pros::delay(350);
     }
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)){
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT) || master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)){
       if((current_auton_page + 1) < auton_count){
         current_auton_page++;
         pros::screen::set_pen(COLOR_BLACK);
@@ -82,6 +82,17 @@ void AutonSelector::run(){
       }
       pros::delay(350);
     }
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X) || master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)
+         || master.get_digital(pros::E_CONTROLLER_DIGITAL_A) || master.get_digital(pros::E_CONTROLLER_DIGITAL_B)){
+      pros::screen::set_pen(COLOR_BLACK);
+      pros::screen::draw_rect(0, 0, BRAIN_WIDTH, BRAIN_HEIGHT);
+      pros::screen::fill_rect(0, 0, BRAIN_WIDTH, BRAIN_HEIGHT);
+      pros::screen::set_pen(COLOR_GREEN);
+      pros::c::screen_set_pen(COLOR_GREEN);
+      const char * f = Autons[current_auton_page].Name.c_str();
+      pros::c::screen_print_at(pros::E_TEXT_LARGE, BRAIN_WIDTH/3, BRAIN_HEIGHT/3, f, " has been selected");
+      return;
+    }
     pros::delay(10);
-  // }
+  }
 }

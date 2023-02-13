@@ -3,10 +3,11 @@
 
 using namespace ftt;
 
-void Drive::set_drive_pid(double p, double i, double d){
+void Drive::set_drive_pid(double p, double i, double d, double heading){
     driveP = p;
     driveI = i;
     driveD = d;
+    driveH = heading;
 }
 
 void Drive::set_turn_pid(double p, double i, double d){
@@ -112,7 +113,7 @@ void Drive::auton_pid_task(){
         P = error * driveP;
         I = i * driveI;
         D = d * driveD;
-        H = headingError * 2;
+        H = headingError * driveH;
 
         // limit max speed
         Ol = (abs(P + I + D + H) > abs(volt)) ? abs(volt + H) : abs(P + I + D + H);

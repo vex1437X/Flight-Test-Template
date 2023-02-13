@@ -29,11 +29,11 @@
             "-funwind-tables",
             "--std=gnu++17",
             "-o",
-            "bin/FTT/skills.cpp.o",
-            "src/FTT/skills.cpp"
+            "bin/FTT/auton_selector.cpp.o",
+            "src/FTT/auton_selector.cpp"
         ],
         "directory": "/Users/mahdi/Documents/VEX/Flight-Test-Template",
-        "file": "src/FTT/skills.cpp"
+        "file": "src/FTT/auton_selector.cpp"
     },
     {
         "arguments": [
@@ -48,7 +48,7 @@
             "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include-fixed",
             "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include",
             "-iquote./include",
-            "-iquote./include/FTT/",
+            "-iquote./include/FTT/drive/",
             "-mcpu=cortex-a9",
             "-mfpu=neon-fp16",
             "-mfloat-abi=softfp",
@@ -65,11 +65,11 @@
             "-funwind-tables",
             "--std=gnu++17",
             "-o",
-            "bin/FTT/auton.cpp.o",
-            "src/FTT/auton.cpp"
+            "bin/FTT/drive/drive.cpp.o",
+            "src/FTT/drive/drive.cpp"
         ],
         "directory": "/Users/mahdi/Documents/VEX/Flight-Test-Template",
-        "file": "src/FTT/auton.cpp"
+        "file": "src/FTT/drive/drive.cpp"
     },
     {
         "arguments": [
@@ -137,11 +137,11 @@
             "-funwind-tables",
             "--std=gnu++17",
             "-o",
-            "bin/FTT/auton_selector.cpp.o",
-            "src/FTT/auton_selector.cpp"
+            "bin/FTT/systems.cpp.o",
+            "src/FTT/systems.cpp"
         ],
         "directory": "/Users/mahdi/Documents/VEX/Flight-Test-Template",
-        "file": "src/FTT/auton_selector.cpp"
+        "file": "src/FTT/systems.cpp"
     },
     {
         "arguments": [
@@ -209,11 +209,11 @@
             "-funwind-tables",
             "--std=gnu++17",
             "-o",
-            "bin/autons.cpp.o",
-            "src/autons.cpp"
+            "bin/main.cpp.o",
+            "src/main.cpp"
         ],
         "directory": "/Users/mahdi/Documents/VEX/Flight-Test-Template",
-        "file": "src/autons.cpp"
+        "file": "src/main.cpp"
     },
     {
         "arguments": [
@@ -228,7 +228,7 @@
             "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include-fixed",
             "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include",
             "-iquote./include",
-            "-iquote./include/FTT/drive/",
+            "-iquote./include/FTT/",
             "-mcpu=cortex-a9",
             "-mfpu=neon-fp16",
             "-mfloat-abi=softfp",
@@ -245,11 +245,47 @@
             "-funwind-tables",
             "--std=gnu++17",
             "-o",
-            "bin/FTT/drive/drive.cpp.o",
-            "src/FTT/drive/drive.cpp"
+            "bin/FTT/skills.cpp.o",
+            "src/FTT/skills.cpp"
         ],
         "directory": "/Users/mahdi/Documents/VEX/Flight-Test-Template",
-        "file": "src/FTT/drive/drive.cpp"
+        "file": "src/FTT/skills.cpp"
+    },
+    {
+        "arguments": [
+            "clang++",
+            "-c",
+            "-target",
+            "armv7ar-none-none-eabi",
+            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include/c++/10.3.1",
+            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v7-a+simd/softfp",
+            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include/c++/10.3.1/backward",
+            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include",
+            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include-fixed",
+            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include",
+            "-iquote./include",
+            "-iquote./include/./",
+            "-mcpu=cortex-a9",
+            "-mfpu=neon-fp16",
+            "-mfloat-abi=softfp",
+            "-Os",
+            "-g",
+            "-D_POSIX_THREADS",
+            "-D_UNIX98_THREAD_MUTEX_ATTRIBUTES",
+            "-D_POSIX_TIMERS",
+            "-D_POSIX_MONOTONIC_CLOCK",
+            "-Wno-psabi",
+            "-ffunction-sections",
+            "-fdata-sections",
+            "-fdiagnostics-color",
+            "-funwind-tables",
+            "--std=gnu++17",
+            "-o",
+            "bin/autons.cpp.o",
+            "src/autons.cpp"
+        ],
+        "directory": "/Users/mahdi/Documents/VEX/Flight-Test-Template",
+        "file": "src/autons.cpp"
     },
     {
         "arguments": [
@@ -300,42 +336,6 @@
             "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include-fixed",
             "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include",
             "-iquote./include",
-            "-iquote./include/./",
-            "-mcpu=cortex-a9",
-            "-mfpu=neon-fp16",
-            "-mfloat-abi=softfp",
-            "-Os",
-            "-g",
-            "-D_POSIX_THREADS",
-            "-D_UNIX98_THREAD_MUTEX_ATTRIBUTES",
-            "-D_POSIX_TIMERS",
-            "-D_POSIX_MONOTONIC_CLOCK",
-            "-Wno-psabi",
-            "-ffunction-sections",
-            "-fdata-sections",
-            "-fdiagnostics-color",
-            "-funwind-tables",
-            "--std=gnu++17",
-            "-o",
-            "bin/main.cpp.o",
-            "src/main.cpp"
-        ],
-        "directory": "/Users/mahdi/Documents/VEX/Flight-Test-Template",
-        "file": "src/main.cpp"
-    },
-    {
-        "arguments": [
-            "clang++",
-            "-c",
-            "-target",
-            "armv7ar-none-none-eabi",
-            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include/c++/10.3.1",
-            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include/c++/10.3.1/arm-none-eabi/thumb/v7-a+simd/softfp",
-            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include/c++/10.3.1/backward",
-            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include",
-            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include-fixed",
-            "-isystem/usr/local/Cellar/arm-gcc-bin@10/10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include",
-            "-iquote./include",
             "-iquote./include/FTT/",
             "-mcpu=cortex-a9",
             "-mfpu=neon-fp16",
@@ -353,10 +353,10 @@
             "-funwind-tables",
             "--std=gnu++17",
             "-o",
-            "bin/FTT/systems.cpp.o",
-            "src/FTT/systems.cpp"
+            "bin/FTT/auton.cpp.o",
+            "src/FTT/auton.cpp"
         ],
         "directory": "/Users/mahdi/Documents/VEX/Flight-Test-Template",
-        "file": "src/FTT/systems.cpp"
+        "file": "src/FTT/auton.cpp"
     }
 ]

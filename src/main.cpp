@@ -97,9 +97,7 @@ void initialize() {
 	chassis.reset_PID_values();
 	skl.initialise();
 	as::auton_selector.initialise();
-	while (true){
-		as::auton_selector.run();
-	}
+	as::auton_selector.run();
 }
 
 

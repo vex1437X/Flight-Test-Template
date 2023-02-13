@@ -167,6 +167,7 @@ class Drive {
     double driveP;
     double driveI;
     double driveD;
+    double driveH;
     double turnP;
     double turnI;
     double turnD;
@@ -176,24 +177,26 @@ class Drive {
      * forwards and backwards
      * 
      * @param p 
-     * P value
+     * Proportional value
      * @param i 
-     * I value
+     * Integral value
      * @param d 
-     * D value
+     * Derivative value
+     * @param heading
+     * Heading multiplier (1.5-3x recommended)
      */
-    void set_drive_pid(double p, double i, double d);
+    void set_drive_pid(double p, double i, double d, double heading);
 
     /**
      * Set PID values for turning
      * left and right
      * 
      * @param p 
-     * P value
+     * Proportional value
      * @param i 
-     * I value
+     * Integral value
      * @param d 
-     * D value
+     * Derivative value
      */
     void set_turn_pid(double p, double i, double d);
 
