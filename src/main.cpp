@@ -69,18 +69,18 @@ Skills skl(
 	0
 );
 
-void Selector_task(void*){
+void Selector_task(void*){ // just a feeder function // KEEP THIS OTHERWISE AUTON SELECTOR WONT WORK
 	while (true){
 		as::auton_selector.run();
 	}
 }
 
-void Auton_task(void*){ // just a feeder function // KEEP THIS OTHERWISE PID WONT WORK
+void Auton_task(void*){ // just a feeder function // KEEP THIS OTHERWISE PID WONT WORK DURING AUTON
 	while (true){
 		chassis.auton_pid_task();
 	}
 }
-void Systems_task(void*){ // just a feeder function // KEEP THIS
+void Systems_task(void*){ // just a feeder function // KEEP THIS OTHERWISE SYSTEMS WONT WORK DURING TELEOP
 	while (true){
 		sys.Systems_task();
 	}
