@@ -53,6 +53,11 @@ class Systems {
      */
     std::vector<pros::Optical> colourW;
 
+   /**
+    * Distance sensor for colour wheel
+    */
+    std::vector<pros::Distance> distanceColour;
+
     /**
      * Systems constructor
      * Set port # to '0' if that type of motor is not present
@@ -60,7 +65,7 @@ class Systems {
     Systems(std::vector<int> intake_motor_ports, std::vector<int> colour_motor_ports, 
             std::vector<int> catapult_motor_ports, std::vector<int> flywheel_motor_ports, 
             int flywheel_CARTRIDGE, int catapult_limit_switch_port, int plate_optical_port, 
-            int colourwheel_optical_port, std::vector<int> expansion_ports);
+            int colourwheel_optical_port, int distance_port, std::vector<int> expansion_ports);
 
      /**
      * Sets the chassis to voltage
@@ -264,6 +269,7 @@ class Systems {
     double get_plate_hue();
     void spinRed();
     void spinBlue();
+    double get_distance();
     bool isRed();
     void spinColour();
 };

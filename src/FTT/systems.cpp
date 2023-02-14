@@ -6,7 +6,7 @@ using namespace ftt;
 
 Systems::Systems(std::vector<int> intake_motor_ports, std::vector<int> colour_motor_ports, 
         std::vector<int> catapult_motor_ports, std::vector<int> flywheel_motor_ports, int flywheel_CARTRIDGE, 
-        int catapult_limit_switch_port, int plate_optical_port, int colourwheel_optical_port, std::vector<int> expansion_ports){
+        int catapult_limit_switch_port, int plate_optical_port, int colourwheel_optical_port, int distance_port, ::vector<int> expansion_ports){
     
     // Set ports to global motor vectors
     for (int i : intake_motor_ports) {
@@ -41,6 +41,9 @@ Systems::Systems(std::vector<int> intake_motor_ports, std::vector<int> colour_mo
 
     pros::Optical s2(colourwheel_optical_port);
     colourW.push_back(s2);
+
+    pros::Distance d1(distance_port);
+    distanceColour.push_back(d1);
 
     FLY_CART = flywheel_CARTRIDGE;
 }
@@ -197,6 +200,14 @@ int Systems::get_colourW_prox(){
 }
 
 
+double Systems::get_distance(){
+    for (pros::Distance i : distanceColour) {
+        return i.get(); // should only run once
+    }
+    return -1.0;
+}
+
+
 double Systems::get_colourW_hue(){
     for (pros::Optical i : colourW) {
         i.disable_gesture();
@@ -217,7 +228,7 @@ double Systems::get_plate_hue(){
 
 void Systems::spinRed(){ // spin until blue is bottom
     int exit = 0;
-    while(((get_colourW_hue() > blueHue - 100 && get_colourW_hue() < blueHue + 80)) && exit < 1000){
+    while((!(get_colourW_hue() > blueHue - 100 && get_colourW_hue() < blueHue + 80)) && exit < 1000){
         set_colour(abs(COLOUR_SPEED)*-1);
         exit++;
         pros::delay(10);
@@ -227,7 +238,7 @@ void Systems::spinRed(){ // spin until blue is bottom
 
 void Systems::spinBlue(){ // spin until red is bottom
     int exit = 0;
-    while(((get_colourW_hue() > 360 - 40 || get_colourW_hue() < redHue + 100)) && exit < 1000){
+    while((!(get_colourW_hue() > 360 - 40 || get_colourW_hue() < redHue + 100)) && exit < 1000){
         set_colour(abs(COLOUR_SPEED)*-1);
         exit++;
         pros::delay(10);

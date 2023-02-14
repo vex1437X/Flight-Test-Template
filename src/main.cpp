@@ -55,6 +55,10 @@ Systems sys( // Leave port at 0 if that specific subsystem is not present
 	// Place so colour wheel optical sensor is parallel with the inside of the colour wheel
 	0,
 
+	// Distance sensor port
+	// Place to be parallel to the wall you will line up with when using the colour wheel
+	0,
+
 	// Expansion eneumatics ports
 	// A = 1; B = 2; C = 3; etc...
 	{0}
@@ -65,8 +69,14 @@ Skills skl(
 	0
 );
 
+void Selector_task(void*){
+	while (true){
+		as::auton_selector.run();
+	}
+}
+
 void Auton_task(void*){ // just a feeder function // KEEP THIS OTHERWISE PID WONT WORK
-	while(true){
+	while (true){
 		chassis.auton_pid_task();
 	}
 }
@@ -78,9 +88,10 @@ void Systems_task(void*){ // just a feeder function // KEEP THIS
 
 Task AutonsPID(Auton_task, nullptr); // always make sure this is before your auton is being called
 Task SystemsCalc(Systems_task, nullptr); // used for flywheel adjustments // used for catapult resets // used for colour wheel
-
+Task Selector(Selector_task, nullptr);
 
 void initialize() {
+	Selector.suspend();
 	AutonsPID.suspend();
 	SystemsCalc.suspend();
 	delay(500);
@@ -97,7 +108,7 @@ void initialize() {
 	chassis.reset_PID_values();
 	skl.initialise();
 	as::auton_selector.initialise();
-	as::auton_selector.run();
+	Selector.resume();
 }
 
 
@@ -106,6 +117,7 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
+	Selector.suspend();
 	chassis.reset_gyro(); // Reset gyro position to 0
 	chassis.reset_drive_sensors(); // Reset drive sensors to 0
 	chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
@@ -117,6 +129,8 @@ void autonomous() {
 
 
 void opcontrol() {
+	Selector.suspend();
+	Selector.remove();
 	SystemsCalc.resume();
 	AutonsPID.suspend(); // stop the auton PID
 	AutonsPID.remove();
