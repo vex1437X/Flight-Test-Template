@@ -4,6 +4,7 @@
 
 extern Drive chassis;
 extern Systems sys;
+extern Skills skl;
 
 void auton1();
 void auton2();

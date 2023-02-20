@@ -313,7 +313,7 @@
       "description": "FTT",
       "icon": "planet",
       "remote_name": "Odometry-v1",
-      "slot": 3
+      "slot": 1
     }
   }
 }

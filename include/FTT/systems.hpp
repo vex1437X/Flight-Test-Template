@@ -246,16 +246,18 @@ class Systems {
     */
     void set_cata_mode(pros::motor_brake_mode_e brake_mode);
 
+   int NUM_FLYWHEEL = 0;
+   int NUM_CATAPULT = 0;
+   int NUM_INTAKE = 0;
+   int NUM_COLOURWHEEL = 0;
 
-
-
-
-
+   bool contains_flywheel();
+   bool contains_catapult();
+   bool contains_intake();
+   bool contains_colourwheel();
 
  private:
     double getActRPM();
-
-    int NUM_FLYWHEEL = 0;
 
     int FLY_CART = 0;
 

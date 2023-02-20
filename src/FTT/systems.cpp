@@ -7,17 +7,20 @@ using namespace ftt;
 Systems::Systems(std::vector<int> intake_motor_ports, std::vector<int> colour_motor_ports, 
         std::vector<int> catapult_motor_ports, std::vector<int> flywheel_motor_ports, int flywheel_CARTRIDGE, 
         int catapult_limit_switch_port, int plate_optical_port, int colourwheel_optical_port, int distance_port, ::vector<int> expansion_ports){
-    
+
     // Set ports to global motor vectors
     for (int i : intake_motor_ports) {
+        NUM_INTAKE++;
         pros::Motor place(abs(i), is_reversed(i));
         intake_motors.push_back(place);
     }
     for (int i : colour_motor_ports) {
+        NUM_COLOURWHEEL++;
         pros::Motor place(abs(i), is_reversed(i));
         colour_motors.push_back(place);
     }
     for (int i : catapult_motor_ports) {
+        NUM_CATAPULT++;
         pros::Motor place(abs(i), is_reversed(i));
         catapult_motors.push_back(place);
     }
@@ -46,6 +49,34 @@ Systems::Systems(std::vector<int> intake_motor_ports, std::vector<int> colour_mo
     distanceColour.push_back(d1);
 
     FLY_CART = flywheel_CARTRIDGE;
+}
+
+bool Systems::contains_flywheel(){
+    if (flywheel_motors[0].get_port() == 0){
+        return true;
+    }
+    return false;
+}
+
+bool Systems::contains_catapult(){
+    if (catapult_motors[0].get_port() == 0){
+        return true;
+    }
+    return false;
+}
+
+bool Systems::contains_intake(){
+    if (intake_motors[0].get_port() == 0){
+        return true;
+    }
+    return false;
+}
+
+bool Systems::contains_colourwheel(){
+    if (colour_motors[0].get_port() == 0){
+        return true;
+    }
+    return false;
 }
 
 void Systems::set_intake(double percent) {
